@@ -4,14 +4,15 @@
   "description": "",
   "type": "module",
   "main": "index.js",
-  "scripts":{ 
-  "dev": "npx tsx watch index.ts",
-  "test": "echo \"Error: no test specified\" && exit 1"
+  "scripts": {
+    "dev": "npx tsx watch ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "class-validator": "^0.14.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",

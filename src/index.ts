@@ -4,9 +4,14 @@ import "reflect-metadata";
 import cors from "cors";
 import bodyParser from "body-parser";
 import {AppDataSource} from "../database/typeorm.js";
+import Login from "./Routes/Login"
+
+
 
 dotenv.config();
 const app = express();
+
+app.use("/Login",Login);
 
 // database initializer
 (async () => {

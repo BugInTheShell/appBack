@@ -5,13 +5,17 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import {AppDataSource} from "../database/typeorm.js";
 import Login from "./Routes/Login"
-
+import Users from "./Routes/Users"
+import FIles from "./Routes/Files"
 
 
 dotenv.config();
 const app = express();
 
 app.use("/Login",Login);
+app.use("/Users",Users);
+app.use("/Files",FIles);
+
 
 // database initializer
 (async () => {

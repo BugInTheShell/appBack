@@ -29,7 +29,7 @@ app.use("/Files",FIles);
 })();
 
 const corsOptions = {
-  origin: ["*"],
+  origin: ["https://app.aboutadev.online:8443"],
   methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: [
     "Content-Type",

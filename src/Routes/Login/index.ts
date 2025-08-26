@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../../models";
 import { AppDataSource } from "../../../database/typeorm.js";
-
+import { login } from "../../Controllers/Login";
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);
 
@@ -19,34 +19,18 @@ router.get("/", async (req: Request, res: Response) => {
 
 // 🔹 LOGIN
 router.post("/", async (req: Request, res: Response) => {
-  console.log("Si funciona la ruta ");
+  
   const { email, password } = req.body;
 	console.log("Datos ",req.body)
   try {
-    // Buscar usuario por nombre
-    const user = await userRepository.findOne({where:{ email },select: ["id", "name", "email", "password"],});
-    console.log("Usuario ",user);	
+    const isLogged = await login( req.body);
 
-    if (!user) {
-      return res.status(500).json({ error: "Usuario no encontrado" });
+    if(isLogged){
+      res.status(200).json({
+        message: "Inicio de sesión exitoso",
+        isLogged,
+      });
     }
-
-    // ⚠️ Aquí deberías usar bcrypt.compare en lugar de comparar plano
-    if (user.password !== password) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
-    }
-
-    // Crear token
-    const token = jwt.sign(
-      { id: user.id, name: user.name }, // payload
-      JWT_SECRET,
-      { expiresIn: "1h" } // expira en 1 hora
-    );
-
-    res.status(200).json({
-      message: "Inicio de sesión exitoso",
-      token,
-    });
   } catch (err) {
     console.error("Error en login:", err);
     res.status(500).json({ error: "Error interno del servidor" });

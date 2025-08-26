@@ -3,5 +3,10 @@ export interface ICreateUser {
   email: string;
   password: string;
   confirmPassword: string;
-  Phone_number?: string; // opcional por si no lo envían
+  Phone_number?: string; 
+}
+
+export interface IValidateUser {
+  email:string,
+  password:string
 }

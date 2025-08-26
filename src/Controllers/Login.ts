@@ -1,9 +1,9 @@
-import { ICreateUser} from "../Interfaces"
+import { ICreateUser, IValidateUser} from "../Interfaces"
 import bcrypt from "bcryptjs";
 import { AppDataSource} from "../../database/typeorm";
 import { User } from "../models";
 import { User_Privileges } from "../enums/privileges";
-
+import jwt from "jsonwebtoken";
 const userRepository = AppDataSource.getRepository(User);
 
 export const createUser = async ( user : ICreateUser) => {
@@ -21,3 +21,36 @@ export const createUser = async ( user : ICreateUser) => {
   return await userRepository.save(newUser);
 
 };
+
+export const login = async ( user: IValidateUser) => {
+
+    const userLoged = await userRepository.findOne({
+    where: { email:user.email },
+    select :["id", "name", "email", "password", "privilege"]
+  } );
+
+   if (!userLoged) {
+        return false;
+    }
+
+    const isMatch = await bcrypt.compare(userLoged.password, user.password);
+    
+    if (!isMatch) {
+        return false;
+    }
+
+    const token = jwt.sign(
+    {
+      id: userLoged.id,
+      name: userLoged.name,
+      email: userLoged.email,
+      privilege: userLoged.privilege,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "12h" }
+
+  );
+
+  return token;
+
+}

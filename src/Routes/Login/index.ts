@@ -10,7 +10,6 @@ const userRepository = AppDataSource.getRepository(User);
 // 🔹 LOGIN
 router.post("/", async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log("Datos ", req.body);
 
   try {
     const isLogged = await login(req.body);

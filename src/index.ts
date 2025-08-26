@@ -7,7 +7,7 @@ import {AppDataSource} from "../database/typeorm.js";
 import Login from "./Routes/Login"
 import Users from "./Routes/Users"
 import FIles from "./Routes/Files"
-
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -15,6 +15,8 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.text());
+app.use(cookieParser());
+
 
 app.use("/Login",Login);
 app.use("/Users",Users);

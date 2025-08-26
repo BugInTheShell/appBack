@@ -1,6 +1,5 @@
 import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
-
 import { User } from "../../models";
 import { AppDataSource } from "../../../database/typeorm.js";
 import { login } from "../../Controllers/Login";
@@ -30,6 +29,7 @@ router.post("/", async (req: Request, res: Response) => {
       res.status(200).json({
         message: "Inicio de sesión exitoso",
         isLogged,
+        status:200
       });
     } else {
       res.status(401).json({ message: "Credenciales incorrectas" });

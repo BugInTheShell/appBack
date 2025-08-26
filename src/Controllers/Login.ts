@@ -1,10 +1,19 @@
 import { ICreateUser, IValidateUser} from "../Interfaces"
+import AWS from 'aws-sdk';
 import bcrypt from "bcryptjs";
 import { AppDataSource} from "../../database/typeorm";
 import { User } from "../models";
 import { User_Privileges } from "../enums/privileges";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv';
+dotenv.config();
 const userRepository = AppDataSource.getRepository(User);
+
+const s3 = new AWS.S3({
+  region: process.env.AWS_REGION,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+});
 
 export const createUser = async ( user : ICreateUser) => {
 	

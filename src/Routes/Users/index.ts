@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 //autenticacion de 2 factores
 import speakeasy from "speakeasy";
-
+import { createUser } from "../../Controllers/Login";
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
 import { UserFilePrivilege } from "../../models";
@@ -30,12 +30,22 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST: crear un usuario
 router.post("/create", async (req:Request, res: Response) => {
    try {
-        console.log("Data obtendia ",req.body)
- 	 const newUser = userRepository.create(req.body);
-  	const result = await userRepository.save(newUser);
-  	res.status(200).json("Peticion hecha correctamente");
+    console.log("Data obtendia ",req.body)
+    const createuser = await createUser(req.body);
+
+    if(createuser){
+      res.status(200).json({
+        status:200,
+        message:"Usuario creado correctamente"
+      });
+    }
+
    } catch (error) {
    	console.log("Error al enviar datos ",error);
+    res.status(500).json({
+      status:500,
+      message:error
+    })
    
    }
 });

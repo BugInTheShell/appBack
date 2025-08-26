@@ -32,8 +32,19 @@ export class User {
   @Column({
     name: "Phone_number",
     type: "varchar",
+    nullable: true
   })
   phoneNumber: string;
+
+ @Column({
+    name: "Password",
+    type: "varchar",
+    length: 255,
+    nullable: false,
+    select: false,
+  })
+  password: string;
+
 
   @Column({
     name: "Privilege",

@@ -28,11 +28,16 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // POST: crear un usuario
-router.post("/", async (req: Request, res: Response) => {
-  console.log("Data obtendia ",req)
-  //const newUser = userRepository.create(req.body);
-  //const result = await userRepository.save(newUser);
-  res.status(200).json("Peticion hecha correctamente");
+router.post("/create", async (req:Request, res: Response) => {
+   try {
+        console.log("Data obtendia ",req.body)
+ 	 const newUser = userRepository.create(req.body);
+  	const result = await userRepository.save(newUser);
+  	res.status(200).json("Peticion hecha correctamente");
+   } catch (error) {
+   	console.log("Error al enviar datos ",error);
+   
+   }
 });
 
 // PUT: actualizar un usuario

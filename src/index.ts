@@ -12,6 +12,10 @@ import FIles from "./Routes/Files"
 dotenv.config();
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.text());
+
 app.use("/Login",Login);
 app.use("/Users",Users);
 app.use("/Files",FIles);
@@ -29,7 +33,7 @@ app.use("/Files",FIles);
 })();
 
 const corsOptions = {
-  origin: ["https://app.aboutadev.online:8443"],
+  origin: ["https://app.aboutadev.online:8443/","https://api.aboutadev.online:8443/"],
   methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: [
     "Content-Type",
@@ -47,16 +51,13 @@ const PORT = 3000;
 app.use(express.json());
 
 //Uso de cors
-app.use(cors(corsOptions));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.text());
-
+//app.use(cors(corsOptions));
 
 // Ruta principal
 app.get('/', (req, res) => {
   res.send('Bienvenido ya modificaste esto xd');
 });
+
 
 // Otra ruta de ejemplo
 app.get('/saludo/:nombre', (req, res) => {

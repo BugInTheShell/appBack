@@ -21,10 +21,10 @@ const userRepository = AppDataSource.getRepository(User);
 const filesRepository = AppDataSource.getRepository(UserFilePrivilege);
 
 const s3 = new S3Client({
-  region: "us-east-1",
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId:"AKIA2MUGI5QUKULPMSGM",
-    secretAccessKey: "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",
+    accessKeyId:process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey:process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
@@ -45,24 +45,24 @@ router.get("/file-privileges/:id", async (req: Request, res: Response) => {
 // Ruta POST para subir el archivo a S3
 router.post('/upload', upload.single('file'),async (req, res) => {
 
+  const bucket = "almacenamiento-examen";
+  const carpeta ="imagenes/index.png"
+  const url = "https://"+bucket+".s3"+process.env.AWS_REGION+".amazonaws.com"+carpeta
+
   try {
     if (!req.file) {
       return res.status(400).send('No se ha subido ningún archivo.');
     }
-
-    const command = new CreateBucketCommand({ Bucket: "Pruebas" });
-    await s3.send(command);
-    console.log(`✅ Bucket '${"Pruebas"}' creado correctamente`);
   
     console.log("Archivo obtenido ",req.file)
   
-    /* const s3Params = {
-      Bucket: 'TU_NOMBRE_DE_BUCKET_S3', // Reemplaza con el nombre de tu bucket
+    const s3Params = {
+      Bucket: bucket,
       Key: Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
       Body: req.file.buffer, // El contenido binario del archivo
-      ContentType: req.file.mimetype,
+      ContentType:"",
       ACL: 'public-read' // Opcional: para que el archivo sea públicamente accesible
-    }; */
+    };
   
     // Subir el archivo a S3
     /* s3.upload(s3Params, (err: Error, data: AWS.S3.ManagedUpload.SendData) => {

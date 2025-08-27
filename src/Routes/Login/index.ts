@@ -1,5 +1,4 @@
 import { Request, Response, Router } from "express";
-import jwt from "jsonwebtoken";
 import { User } from "../../models";
 import { AppDataSource } from "../../../database/typeorm.js";
 import { login } from "../../Controllers/Login";

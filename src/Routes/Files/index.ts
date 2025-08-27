@@ -1,5 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express";
-import jwt from "jsonwebtoken";
+import { Request, Response, Router } from "express";
 //autenticacion de 2 factores
 import { S3Client } from "@aws-sdk/client-s3";
 
@@ -9,8 +8,8 @@ import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
 import { CreateBucketCommand } from "@aws-sdk/client-s3";
-
-
+import dotenv from 'dotenv';
+dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -22,7 +21,7 @@ const userRepository = AppDataSource.getRepository(User);
 const filesRepository = AppDataSource.getRepository(UserFilePrivilege);
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION, // ejemplo: "us-east-1"
+  region: process.env.AWS_REGION,
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,

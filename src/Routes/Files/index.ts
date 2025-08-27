@@ -21,10 +21,10 @@ const userRepository = AppDataSource.getRepository(User);
 const filesRepository = AppDataSource.getRepository(UserFilePrivilege);
 
 const s3 = new S3Client({
-  region: process.env.AWS_REGION,
+  region: "us-east-1",
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId:"AKIA2MUGI5QUKULPMSGM",
+    secretAccessKey: "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",
   },
 });
 

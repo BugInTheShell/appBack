@@ -27,12 +27,6 @@ const s3 = new S3Client({
   },
 });
 
-// GET: listar todos
-router.get("/file-privileges", async (req: Request, res: Response) => {
-  const privileges = await filesRepository.find();
-  res.json(privileges);
-});
-
 // GET: obtener por correo
 router.get("/file-privileges/", async (req: Request, res: Response) => {
 
@@ -47,6 +41,7 @@ router.get("/file-privileges/", async (req: Request, res: Response) => {
   });
 
   const response = await s3.send(command);
+
 
     if (!response.Contents) {
       console.log("📂 Carpeta vacía o no existe");

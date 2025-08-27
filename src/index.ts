@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from "dotenv";
+import multer from 'multer';
+import AWS from 'aws-sdk';
 import "reflect-metadata";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -11,6 +13,9 @@ import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
+// Configurar Multer para el almacenamiento en memoria
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());

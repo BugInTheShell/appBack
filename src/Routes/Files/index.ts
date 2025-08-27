@@ -51,11 +51,13 @@ router.get("/file-privileges", async (req: Request, res: Response) => {
     }
 
     const archivos = response.Contents.map((obj) => obj.Key);
+
     console.log("Archivos encontrados:", archivos);
+
     res.status(200).json({
       status:200,
       message:"Archivos encontrados",
-      archivos
+      archivos:response.Contents
     })
 
 

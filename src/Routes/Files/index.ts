@@ -35,20 +35,23 @@ router.get("/file-privileges/:id", async (req: Request, res: Response) => {
 
 // Ruta POST para subir el archivo a S3
 router.post('/upload', upload.single('file'), (req, res) => {
+
   if (!req.file) {
     return res.status(400).send('No se ha subido ningún archivo.');
   }
 
-  const s3Params = {
+  console.log("Archivo obtenido ",req.file)
+
+  /* const s3Params = {
     Bucket: 'TU_NOMBRE_DE_BUCKET_S3', // Reemplaza con el nombre de tu bucket
     Key: Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
     Body: req.file.buffer, // El contenido binario del archivo
     ContentType: req.file.mimetype,
     ACL: 'public-read' // Opcional: para que el archivo sea públicamente accesible
-  };
+  }; */
 
   // Subir el archivo a S3
-  s3.upload(s3Params, (err: Error, data: AWS.S3.ManagedUpload.SendData) => {
+  /* s3.upload(s3Params, (err: Error, data: AWS.S3.ManagedUpload.SendData) => {
     if (err) {
       console.error('Error al subir a S3:', err);
       return res.status(500).send('Error al subir el archivo a S3.');
@@ -56,12 +59,12 @@ router.post('/upload', upload.single('file'), (req, res) => {
 
     console.log("Archivo subido exitosamente a S3: ${data.Location}");
 
+    }); */
     res.status(200).json({
       message: 'Archivo subido exitosamente a S3.',
-      s3Location: data.Location,
-      fileName: req.file.originalname,
+      /* s3Location: data.Location,
+      fileName: req.file.originalname, */
     });
-  });
 });
 
 // PUT: actualizar

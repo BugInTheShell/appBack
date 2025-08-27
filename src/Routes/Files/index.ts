@@ -1,19 +1,15 @@
 import { NextFunction, Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 //autenticacion de 2 factores
-import speakeasy from "speakeasy";
-
-import crypto from "crypto";
-import CryptoJS from "crypto-js"; 
+import { S3Client } from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
 import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
+import { CreateBucketCommand } from "@aws-sdk/client-s3";
 
-
-const SECRET_KEY = "clave-secreta-super-segura";
 
 // Configurar Multer para el almacenamiento en memoria
 const storage = multer.memoryStorage();
@@ -24,6 +20,14 @@ const router = Router();
 //Repositorios
 const userRepository = AppDataSource.getRepository(User);
 const filesRepository = AppDataSource.getRepository(UserFilePrivilege);
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION, // ejemplo: "us-east-1"
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 // GET: listar todos
 router.get("/file-privileges", async (req: Request, res: Response) => {
@@ -40,12 +44,16 @@ router.get("/file-privileges/:id", async (req: Request, res: Response) => {
 });
 
 // Ruta POST para subir el archivo a S3
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload', upload.single('file'),async (req, res) => {
 
   try {
     if (!req.file) {
       return res.status(400).send('No se ha subido ningún archivo.');
     }
+
+    const command = new CreateBucketCommand({ Bucket: "Pruebas" });
+    await s3.send(command);
+    console.log(`✅ Bucket '${"Pruebas"}' creado correctamente`);
   
     console.log("Archivo obtenido ",req.file)
   

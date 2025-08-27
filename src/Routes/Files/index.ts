@@ -3,11 +3,17 @@ import jwt from "jsonwebtoken";
 //autenticacion de 2 factores
 import speakeasy from "speakeasy";
 
+import crypto from "crypto";
+import CryptoJS from "crypto-js"; 
+
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
 import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
+
+
+const SECRET_KEY = "clave-secreta-super-segura";
 
 // Configurar Multer para el almacenamiento en memoria
 const storage = multer.memoryStorage();

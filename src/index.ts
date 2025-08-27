@@ -16,7 +16,8 @@ const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 app.use(express.json());
 app.use(express.text());
 app.use(cookieParser());

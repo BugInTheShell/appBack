@@ -44,6 +44,9 @@ router.get("/file-privileges/:id", async (req: Request, res: Response) => {
 // Ruta POST para subir el archivo a S3
 router.post('/upload', upload.single('file'),async (req, res) => {
 
+  const token = req.cookies.token;
+  console.log("Token de inicio de sesión ",token)
+
   const bucket = "almacenamiento-examen";
   const carpeta =`Imagenes/${req.file.originalname}`
   const url = "https://"+bucket+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta

@@ -27,8 +27,10 @@ const s3 = new S3Client({
   },
 });
 
+
+
 // GET: obtener por correo
-router.get("/file-privileges/", async (req: Request, res: Response) => {
+router.get("/file-privileges", async (req: Request, res: Response) => {
 
   /* const privilege = await filesRepository.findOneBy({
     email:req.email,

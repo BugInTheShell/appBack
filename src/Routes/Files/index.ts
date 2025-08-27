@@ -65,13 +65,13 @@ router.post('/upload', upload.single('file'),async (req, res) => {
 
     const command = new PutObjectCommand(s3Params);
     await s3.send(command).then( response => {
-      res.status(200).json({
+      return res.status(200).json({
         status: 200,
         url
       })
     }).catch( error => {
       console.log("Error al subir archivo ",error)
-      res.status(400).json({
+      return res.status(400).json({
         message:"Error al subir archivo"
       })
     })

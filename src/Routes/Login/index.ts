@@ -2,11 +2,12 @@ import { Request, Response, Router } from "express";
 import { User } from "../../models";
 import { AppDataSource } from "../../../database/typeorm.js";
 import { login } from "../../Controllers/Login";
+import {access} from "../../middlewares/index"
 const router = Router();
 const userRepository = AppDataSource.getRepository(User);
 
 // 🔹 LOGIN
-router.post("/", async (req: Request, res: Response) => {
+router.post("/",access,async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {

@@ -60,7 +60,7 @@ router.post('/upload', upload.single('file'),async (req, res) => {
   
     const s3Params = {
       Bucket: bucket,
-      Key: Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
+      Key:  "Imagenes/" +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
       Body: req.file.buffer, // El contenido binario del archivo
       ContentType:req.filter.mimetype
     };

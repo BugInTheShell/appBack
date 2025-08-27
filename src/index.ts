@@ -1,7 +1,6 @@
 import express from 'express';
 import dotenv from "dotenv";
 import multer from 'multer';
-import AWS from 'aws-sdk';
 import "reflect-metadata";
 import cors from "cors";
 import bodyParser from "body-parser";

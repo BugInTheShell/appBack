@@ -1,6 +1,6 @@
-import { Request, Response, Router } from "express";
+import { Request, response, Response, Router } from "express";
 //autenticacion de 2 factores
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client , PutObjectAclCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
@@ -60,9 +60,21 @@ router.post('/upload', upload.single('file'),async (req, res) => {
       Bucket: bucket,
       Key: Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
       Body: req.file.buffer, // El contenido binario del archivo
-      ContentType:"",
-      ACL: 'public-read' // Opcional: para que el archivo sea públicamente accesible
+      ContentType:req.filter.mimetype
     };
+
+    const command = new PutObjectCommand(s3Params);
+    await s3.send(command).then( response => {
+      res.status(200).json({
+        status: 200,
+        url
+      })
+    }).catch( error => {
+      console.log("Error al subir archivo ",error)
+      res.status(400).json({
+        message:"Error al subir archivo"
+      })
+    })
   
     // Subir el archivo a S3
     /* s3.upload(s3Params, (err: Error, data: AWS.S3.ManagedUpload.SendData) => {

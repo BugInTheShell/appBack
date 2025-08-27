@@ -43,7 +43,7 @@ router.get("/file-privileges/", async (req: Request, res: Response) => {
 
   const command = new ListObjectsV2Command({
       Bucket: "almacenamiento-examen",
-      Prefix: "Inicio/",
+      Prefix: "Imagenes/",
   });
 
   const response = await s3.send(command);

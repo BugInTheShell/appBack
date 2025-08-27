@@ -1,13 +1,12 @@
 import { Request, response, Response, Router } from "express";
 //autenticacion de 2 factores
-import { S3Client , PutObjectAclCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client , PutObjectCommand } from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
 import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
-import { CreateBucketCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria

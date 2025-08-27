@@ -75,22 +75,6 @@ router.post('/upload', upload.single('file'),async (req, res) => {
         message:"Error al subir archivo"
       })
     })
-  
-    // Subir el archivo a S3
-    /* s3.upload(s3Params, (err: Error, data: AWS.S3.ManagedUpload.SendData) => {
-      if (err) {
-        console.error('Error al subir a S3:', err);
-        return res.status(500).send('Error al subir el archivo a S3.');
-      }
-  
-      console.log("Archivo subido exitosamente a S3: ${data.Location}");
-  
-      }); */
-      res.status(200).json({
-        message: 'Archivo subido exitosamente a S3.',
-        /* s3Location: data.Location,
-        fileName: req.file.originalname, */
-      });
     
   } catch (error) {
     console.log("Error al procesar archivo ",error)

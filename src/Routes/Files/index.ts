@@ -1,6 +1,6 @@
 import { Request, response, Response, Router } from "express";
 //autenticacion de 2 factores
-import { S3Client , PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client , PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
@@ -33,18 +33,42 @@ router.get("/file-privileges", async (req: Request, res: Response) => {
   res.json(privileges);
 });
 
-// GET: obtener por id
-router.get("/file-privileges/:id", async (req: Request, res: Response) => {
-  const privilege = await filesRepository.findOneBy({
-    id: parseInt(req.params.id),
+// GET: obtener por correo
+router.get("/file-privileges/", async (req: Request, res: Response) => {
+
+  /* const privilege = await filesRepository.findOneBy({
+    email:req.email,
   });
-  res.json(privilege);
+  res.json(privilege); */
+
+  const command = new ListObjectsV2Command({
+      Bucket: "almacenamiento-examen",
+      Prefix: "Inicio/",
+  });
+
+  const response = await s3.send(command);
+
+    if (!response.Contents) {
+      console.log("📂 Carpeta vacía o no existe");
+      return [];
+    }
+
+    const archivos = response.Contents.map((obj) => obj.Key);
+    console.log("Archivos encontrados:", archivos);
+    res.status(200).json({
+      status:200,
+      message:"Archivos encontrados",
+      archivos
+    })
+
+
+
 });
 
 // Ruta POST para subir el archivo a S3
 router.post('/upload', upload.single('file'),async (req, res) => {
 
-  const token = req.cookies.token;
+  const token = req;
   console.log("Token de inicio de sesión ",token)
 
   const bucket = "almacenamiento-examen";

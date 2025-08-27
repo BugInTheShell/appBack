@@ -14,8 +14,8 @@ router.post("/", async (req: Request, res: Response) => {
     const isLogged = await login(req.body);
 
     if (isLogged) {
-      
-      const jwtToken = isLogged.token; 
+      // Suponiendo que login devuelve el token JWT
+      const jwtToken = isLogged.token; // ajusta según tu implementación  
 
       // Establecer la cookie por 12 horas
       res.cookie('token', jwtToken, {

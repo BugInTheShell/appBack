@@ -46,8 +46,8 @@ router.get("/file-privileges/:id", async (req: Request, res: Response) => {
 router.post('/upload', upload.single('file'),async (req, res) => {
 
   const bucket = "almacenamiento-examen";
-  const carpeta ="imagenes/prueba.jpeg"
-  const url = "https://"+bucket+".s3"+process.env.AWS_REGION+".amazonaws.com/"+carpeta
+  const carpeta ="Imagenes/"
+  const url = "https://"+bucket+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
 
   console.log("Carpeta a subir ",url)
 

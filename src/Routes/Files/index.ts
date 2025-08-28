@@ -66,7 +66,7 @@ router.post('/upload',upload.single('file'),access,async (req, res) => {
 
   const carpeta =`${req.email}`+"/"+`${req.file.originalname}`
   const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
-
+  console.log("url a guardar ",url)
   try {
     if (!req.file) {
       return res.status(400).send('No se ha subido ningún archivo.');

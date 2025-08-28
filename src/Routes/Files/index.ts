@@ -50,6 +50,7 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
       })
     
   } catch (error) {
+    console.log("Error ",error)
     res.status(500).json({
       message:"Error al consultar documentos"
     })

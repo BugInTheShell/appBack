@@ -9,7 +9,7 @@ export async function access(req, res: Response, next: NextFunction) {
     const token = req.headers["api-key"] as string;
 
     if (!token) {
-      return res.status(400).json({
+       res.status(400).json({
         status: 400,
         error: "Sin token proporcionado",
       });
@@ -28,43 +28,10 @@ export async function access(req, res: Response, next: NextFunction) {
       req.idUser = decoded.id
       req.nameUser = decoded.name;
       req.privilege = decoded.privilege;
-
+      req.email =decoded.email;
+      console.log(req)
       next();
     });
-  } catch (error) {
-    next(error);
-  }
-}
-
-/**
- * Autentica a los usuarios mientras estan dentro del sitio
- */
-export async function Authenticated(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    // Verificando existencia del token de autenticacion
-    const token = req.headers["authorization"];
-
-    if (!token) {
-      return res.status(400).json({
-        status: 400,
-        error: "Usuario no autenticado",
-      });
-    }
-
-    const decodedToken = jwt.verify(token, process.env.codigo!);
-
-
-    req.idUser = decodedToken.tokenUser.id;
-    req.name = decodedToken.tokenUser.name;
-    req.email = decodedToken.tokenUser.email;
-    req.privilege = decodedToken.tokenUser.privilege;
-    req.idCompany = decodedToken.tokenUser.company.id;
-
-    next();
   } catch (error) {
     next(error);
   }

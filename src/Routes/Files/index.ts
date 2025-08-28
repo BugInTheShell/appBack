@@ -35,63 +35,51 @@ const s3 = new S3Client({
 // GET: obtener por correo
 router.get("/file-privileges",access,async (req: Request, res: Response) => {
 
-  /* const privilege = await filesRepository.findOneBy({
-    email:req.email,
-  });
-  res.json(privilege); */
-
   const command = new ListObjectsV2Command({
-      Bucket: "almacenamiento-examen",
+      Bucket: process.env.AWS_NAME_BUCKET,
       Prefix: `${req.email}/`,
   });
 
-  const response = await s3.send(command);
-
-
-    //const archivos = response.Contents.map((obj) => obj.Key);
-
-    console.log("Archivos encontrados:", response);
-
-    res.status(200).json({
-      status:200,
-      message:"Archivos encontrados",
-      archivos:response.Contents
+  try {
+    const response = await s3.send(command);
+  
+      res.status(200).json({
+        status:200,
+        message:"Archivos encontrados",
+        archivos:response.Contents
+      })
+    
+  } catch (error) {
+    res.status(500).json({
+      message:"Error al consultar documentos"
     })
-
-
+    
+  }
 
 });
 
-// Ruta POST para subir el archivo a S3
+// Ruta para subir el archivo a S3
 router.post('/upload',access,upload.single('file'),async (req, res) => {
 
-
-  const bucket = "almacenamiento-examen";
   const carpeta =`${req.email}/${req.file.originalname}`
-  const url = "https://"+bucket+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
-
-  console.log("Carpeta a subir ",url)
+  const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
 
   try {
     if (!req.file) {
       return res.status(400).send('No se ha subido ningún archivo.');
     }
   
-    console.log("Archivo obtenido ",req.file)
-  
     const s3Params = {
-      Bucket: bucket,
-      Key:  "Imagenes/" +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
+      Bucket: process.env.AWS_NAME_BUCKET,
+      Key:  `${req.email}` +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
       Body: req.file.buffer, // El contenido binario del archivo
       ContentType:req.filter.mimetype
     };
 
     const command = new PutObjectCommand(s3Params);
+
     await s3.send(command).then( response => {
-      return res.status(200).json({
-        status: 200,
-        url
-      })
+      return res.status(200)
     }).catch( error => {
       console.log("Error al subir archivo ",error)
       return res.status(400).json({

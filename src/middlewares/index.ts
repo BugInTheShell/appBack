@@ -6,6 +6,7 @@ dotenv.config();
 
 export async function access(req, res: Response, next: NextFunction) {
   try {
+    console.log("Request ",req)
     const token = req.headers["api-key"] as string;
 
     if (!token) {

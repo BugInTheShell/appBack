@@ -8,6 +8,8 @@ import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
 import dotenv from 'dotenv';
+
+import {access} from "../../middlewares/index"
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
 const storage = multer.memoryStorage();
@@ -30,7 +32,7 @@ const s3 = new S3Client({
 
 
 // GET: obtener por correo
-router.get("/file-privileges", async (req: Request, res: Response) => {
+router.get("/file-privileges",access,async (req: Request, res: Response) => {
 
   /* const privilege = await filesRepository.findOneBy({
     email:req.email,

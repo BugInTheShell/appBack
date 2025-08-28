@@ -42,15 +42,18 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
 
   const command = new ListObjectsV2Command({
       Bucket: "almacenamiento-examen",
-      Prefix: "Imagenes/",
+      Prefix: `${req.email}/`,
   });
 
   const response = await s3.send(command);
 
 
     if (!response.Contents) {
-      console.log("📂 Carpeta vacía o no existe");
-      return [];
+      
+      res.status(404).json({
+        status:404,
+        message:"📂 Carpeta vacía o no existe"
+      })
     }
 
     const archivos = response.Contents.map((obj) => obj.Key);
@@ -69,7 +72,7 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
 
 // Ruta POST para subir el archivo a S3
 router.post('/upload',access,upload.single('file'),async (req, res) => {
-  
+
 
   const bucket = req.email;
   const carpeta =`Imagenes/${req.file.originalname}`

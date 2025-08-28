@@ -34,7 +34,7 @@ const s3 = new S3Client({
 
 // GET: obtener por correo
 router.get("/file-privileges",access,async (req: Request, res: Response) => {
-
+  console.log("req com email ",req.email)
   const command = new ListObjectsV2Command({
       Bucket: process.env.AWS_NAME_BUCKET,
       Prefix: `${req.email}/`,

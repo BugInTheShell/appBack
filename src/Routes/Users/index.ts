@@ -56,6 +56,7 @@ router.put("/users/:id", access,async (req: Request, res: Response) => {
 
 // DELETE: eliminar un usuario
 router.delete("/:id", access,async (req: Request, res: Response) => {
+  console.log("Data de usuario a eliminar ",req.params.id)
   try {
     await userRepository.delete(req.params.id);
     res.status(200).json({ message: "Usuario eliminado", status:200 });

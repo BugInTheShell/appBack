@@ -64,7 +64,7 @@ router.post('/upload',upload.single('file'),access,async (req, res) => {
 
   console.log("COrreo obtendido ",req.email)
 
-  const carpeta =`${req.email}/${req.file.originalname}`
+  const carpeta =`${req.email}`+"/"+`${req.file.originalname}`
   const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
 
   try {

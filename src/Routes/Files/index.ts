@@ -49,16 +49,16 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
 
 
     if (!response.Contents) {
-      
+
       res.status(404).json({
         status:404,
         message:"📂 Carpeta vacía o no existe"
       })
     }
 
-    const archivos = response.Contents.map((obj) => obj.Key);
+    //const archivos = response.Contents.map((obj) => obj.Key);
 
-    console.log("Archivos encontrados:", archivos);
+    console.log("Archivos encontrados:", response);
 
     res.status(200).json({
       status:200,

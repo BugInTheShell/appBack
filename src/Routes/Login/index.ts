@@ -7,7 +7,7 @@ const router = Router();
 const userRepository = AppDataSource.getRepository(User);
 
 // 🔹 LOGIN
-router.post("/",access,async (req: Request, res: Response) => {
+router.post("/",async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {

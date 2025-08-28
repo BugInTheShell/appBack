@@ -25,7 +25,7 @@ export const createUser = async ( user : ICreateUser) => {
       name: user.name,
       email: user.email,
       password: hashedPassword,
-      phoneNumber: user.Phone_number,
+      phoneNumber: user.phoneNumber,
       privilege: User_Privileges.Mango,
     });
 

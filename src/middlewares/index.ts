@@ -25,9 +25,6 @@ export async function access(req: Request, res: Response, next: NextFunction) {
         });
       }
 
-      // Opcional: guardar los datos del usuario en la request
-      req.body.user = decoded;
-
       console.log("Token válido:", decoded);
       next();
     });

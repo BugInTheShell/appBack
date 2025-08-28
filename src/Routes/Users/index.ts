@@ -55,9 +55,13 @@ router.put("/users/:id", access,async (req: Request, res: Response) => {
 });
 
 // DELETE: eliminar un usuario
-router.delete("/users/:id", access,async (req: Request, res: Response) => {
-  await userRepository.delete(req.params.id);
-  res.json({ message: "Usuario eliminado" });
+router.delete("/:id", access,async (req: Request, res: Response) => {
+  try {
+    await userRepository.delete(req.params.id);
+    res.status(200).json({ message: "Usuario eliminado", status:200 });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar usuario", status:500 })
+  }
 });
 
 

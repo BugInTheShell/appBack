@@ -56,6 +56,7 @@ export const createUser = async ( user : ICreateUser) => {
 
 export const login = async ( user: IValidateUser) => {
 	console.log("Usuario en funcion ",user)
+  
     const userLoged = await userRepository.findOne({
     where: { email:user.email },
     select :["id", "name", "email", "password", "privilege"]

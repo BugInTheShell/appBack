@@ -6,30 +6,31 @@ dotenv.config();
 
 export async function access(req: Request, res: Response, next: NextFunction) {
   try {
-     if (req.headers["api-key"]) {
-      
-      const verify = await jwt.verify(
-        req.headers["api-key"] as string,
-        process.env.JWT_SECRET!,
-        (err, decoded) => {
-          if (err) {
-            console.log(err);
-            throw {
-              status: 403,
-              statusText: "Acceso Denegado",
-            };
-          } else {
-            next();
-          }
-        }
-      );
-      console.log("Verificacion ",verify)
-    } else {
+    const token = req.headers["api-key"] as string;
+
+    if (!token) {
       return res.status(400).json({
         status: 400,
         error: "Sin token proporcionado",
       });
     }
+
+    // Verifica el token
+    jwt.verify(token, process.env.JWT_SECRET!, (err, decoded) => {
+      if (err) {
+        console.error("Error al verificar token:", err);
+        return res.status(403).json({
+          status: 403,
+          error: "Acceso Denegado - Token inválido o expirado",
+        });
+      }
+
+      // Opcional: guardar los datos del usuario en la request
+      req.body.user = decoded;
+
+      console.log("Token válido:", decoded);
+      next();
+    });
   } catch (error) {
     next(error);
   }

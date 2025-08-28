@@ -9,7 +9,8 @@ import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
 import dotenv from 'dotenv';
 
-import {access} from "../../middlewares/index"
+import {access} from "../../middlewares/index";
+
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
 const storage = multer.memoryStorage();
@@ -67,12 +68,10 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
 });
 
 // Ruta POST para subir el archivo a S3
-router.post('/upload', upload.single('file'),async (req, res) => {
+router.post('/upload',access,upload.single('file'),async (req, res) => {
+  
 
-  const token = req;
-  console.log("Token de inicio de sesión ",token)
-
-  const bucket = "almacenamiento-examen";
+  const bucket = req.email;
   const carpeta =`Imagenes/${req.file.originalname}`
   const url = "https://"+bucket+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
 

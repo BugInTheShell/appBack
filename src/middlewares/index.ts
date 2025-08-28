@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 
-export async function access(req: Request, res: Response, next: NextFunction) {
+export async function access(req, res: Response, next: NextFunction) {
   try {
     const token = req.headers["api-key"] as string;
 
@@ -25,7 +25,10 @@ export async function access(req: Request, res: Response, next: NextFunction) {
         });
       }
 
-      console.log("Token válido:", decoded);
+      req.idUser = decoded.id
+      req.nameUser = decoded.name;
+      req.privilege = decoded.privilege;
+
       next();
     });
   } catch (error) {

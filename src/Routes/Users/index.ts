@@ -26,7 +26,7 @@ router.get("/:id",access ,async (req: Request, res: Response) => {
 });
 
 // POST: crear un usuario
-router.post("/create",access ,async (req:Request, res: Response) => {
+router.post("/create" ,async (req:Request, res: Response) => {
    try {
     console.log("Data obtendia ",req.body)
     const createuser = await createUser(req.body);

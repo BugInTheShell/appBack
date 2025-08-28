@@ -29,7 +29,7 @@ export async function access(req, res: Response, next: NextFunction) {
       req.nameUser = decoded.name;
       req.privilege = decoded.privilege;
       req.email =decoded.email;
-      console.log(req)
+
       next();
     });
   } catch (error) {

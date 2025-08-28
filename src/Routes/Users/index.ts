@@ -7,28 +7,26 @@ import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
 import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
-
+import { access } from "../../middlewares";
 const router = Router();
 
 //Repositorios
 const userRepository = AppDataSource.getRepository(User);
-const filesRepository = AppDataSource.getRepository(UserFilePrivilege);
-
 
 // GET: listar todos los usuarios
-router.get("/", async (req: Request, res: Response) => {
+router.get("/",access ,async (req: Request, res: Response) => {
   const users = await userRepository.find();
   res.json(users);
 });
 
 // GET: obtener un usuario por id
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id",access ,async (req: Request, res: Response) => {
   const user = await userRepository.findOneBy({ id: parseInt(req.params.id) });
   res.json(user);
 });
 
 // POST: crear un usuario
-router.post("/create", async (req:Request, res: Response) => {
+router.post("/create",access ,async (req:Request, res: Response) => {
    try {
     console.log("Data obtendia ",req.body)
     const createuser = await createUser(req.body);
@@ -51,13 +49,13 @@ router.post("/create", async (req:Request, res: Response) => {
 });
 
 // PUT: actualizar un usuario
-router.put("/users/:id", async (req: Request, res: Response) => {
+router.put("/users/:id", access,async (req: Request, res: Response) => {
   await userRepository.update(req.params.id, req.body);
   res.json({ message: "Usuario actualizado" });
 });
 
 // DELETE: eliminar un usuario
-router.delete("/users/:id", async (req: Request, res: Response) => {
+router.delete("/users/:id", access,async (req: Request, res: Response) => {
   await userRepository.delete(req.params.id);
   res.json({ message: "Usuario eliminado" });
 });

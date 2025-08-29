@@ -15,11 +15,11 @@ const userRepository = AppDataSource.getRepository(User);
 
 // GET: listar todos los usuarios
 router.get("/",access ,async (req, res: Response) => {
-  const users = await userRepository.findAll({
-  where: {
-    registeredBy: req.email
-  }
-});
+    const users = await userRepository.find({
+      where: {
+        registeredby: req.email, // asegúrate que el campo en la entidad se llame igual
+      },
+    });
 
   res.json(users);
 });

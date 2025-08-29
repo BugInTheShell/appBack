@@ -3,7 +3,8 @@ export interface ICreateUser {
   email: string;
   password: string;
   confirmPassword: string;
-  phoneNumber: string; 
+  phoneNumber: string;
+  registeredby?: string 
 }
 
 export interface IValidateUser {

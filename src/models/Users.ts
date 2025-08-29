@@ -45,6 +45,15 @@ export class User {
   })
   password: string;
 
+   @Column({
+    name: "RegisteredBy",
+    type: "varchar",
+    length: 255,
+    nullable: true,
+    select: false,
+  })
+  registeredby: string;
+
 
   @Column({
     name: "Privilege",

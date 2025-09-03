@@ -63,7 +63,7 @@ app.get('/', (req, res) => {
 });
 
 
-// Otra ruta de ejemplo
+
 app.get('/saludo/:nombre', (req, res) => {
   const { nombre } = req.params;
   res.send(`Hola, ${nombre}!`);

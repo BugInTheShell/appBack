@@ -42,7 +42,6 @@ export const createUser = async ( user : ICreateUser) => {
 
     // 5. Crear la carpeta en S3
     await s3.upload(folderParams).promise();
-    console.log(`Carpeta creada con éxito en S3 para el usuario: ${user.email}`);
 
     // 6. Retornar el usuario guardado
     return savedUser;
@@ -82,7 +81,6 @@ export const createUserLoged = async ( user : ICreateUser, req) => {
 
     // 5. Crear la carpeta en S3
     await s3.upload(folderParams).promise();
-    console.log(`Carpeta creada con éxito en S3 para el usuario: ${user.email}`);
 
     // 6. Retornar el usuario guardado
     return savedUser;

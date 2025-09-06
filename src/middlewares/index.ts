@@ -7,7 +7,6 @@ dotenv.config();
 
 export async function access(req, res: Response, next: NextFunction) {
   try {
-    console.log("Request ",req)
     const token = req.headers["api-key"] as string;
 
     if (!token) {
@@ -26,7 +25,6 @@ export async function access(req, res: Response, next: NextFunction) {
           error: "Acceso Denegado - Token inválido o expirado",
         });
       }
-      console.log("Objeto decodificado ",decoded)
       req.idUser = decoded.id
       req.nameUser = decoded.name;
       req.privilege = decoded.privilege;

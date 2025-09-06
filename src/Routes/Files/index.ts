@@ -130,7 +130,6 @@ router.delete("/:name", access,async (req: Request, res: Response) => {
       });
 
     const isUploaded = await s3.send(command);
-    console.log("Respuesta para eliminar archivo ",isUploaded)
 
     res.status(200).json({ 
       status:200,

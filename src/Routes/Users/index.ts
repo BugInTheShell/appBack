@@ -33,7 +33,6 @@ router.get("/:id",access ,async (req: Request, res: Response) => {
 // POST: crear un usuario sin log
 router.post("/create" ,async (req:Request, res: Response) => {
    try {
-    console.log("Data obtendia ",req.body)
     const createuser = await createUser(req.body);
 
     if(createuser){
@@ -57,7 +56,6 @@ router.post("/create" ,async (req:Request, res: Response) => {
 // POST: crear un usuario con log
 router.post("/",access ,async (req:Request, res: Response) => {
    try {
-    console.log("Data obtendia ",req.body)
 
     const createuser = await createUserLoged(req.body, req);
 

@@ -14,6 +14,9 @@ const s3 = new S3Client({
   },
 });
 
+import { Response } from "express";
+
+
 import { IUpdateFile } from "../Interfaces";
 
 
@@ -34,4 +37,27 @@ export const updateFile = async (fileToUpdate: IUpdateFile) => {
           Key: fileToUpdate.newKey,
         };
         const isCopied = await s3.send(new CopyObjectCommand(copyParams));
+}
+
+export const uploadFile = async (req:any, res:Response)  => {
+            const s3Params = {
+              Bucket: process.env.AWS_NAME_BUCKET,
+              Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname,
+              Body: req.file.buffer,
+              ContentType:req.filter.mimetype
+            };
+    
+            const command = new PutObjectCommand(s3Params);
+    
+            await s3.send(command).then( response => {
+              return res.status(200).json({
+                message:"Archivo creado correctamente",
+                status:200
+              })
+            }).catch( error => {
+              console.log("Error al subir archivo ",error)
+              return res.status(400).json({
+                message:"Error al subir archivo"
+              })
+            })
 }

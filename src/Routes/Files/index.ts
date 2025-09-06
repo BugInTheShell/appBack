@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 import { IUpdateFile } from "../../Interfaces";
 import {access} from "../../middlewares/index";
 
-import { DeleteFile } from "../../Controllers/Files";
+import { DeleteFile , uploadFile } from "../../Controllers/Files";
 
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
@@ -68,26 +68,7 @@ router.post('/upload',upload.single('file'),access,async (req:any, res) => {
           return res.status(400).send('No se ha subido ningún archivo.');
         }
       
-        const s3Params = {
-          Bucket: process.env.AWS_NAME_BUCKET,
-          Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname,
-          Body: req.file.buffer,
-          ContentType:req.filter.mimetype
-        };
-
-        const command = new PutObjectCommand(s3Params);
-
-        await s3.send(command).then( response => {
-          return res.status(200).json({
-            message:"Archivo creado correctamente",
-            status:200
-          })
-        }).catch( error => {
-          console.log("Error al subir archivo ",error)
-          return res.status(400).json({
-            message:"Error al subir archivo"
-          })
-        })
+        await uploadFile(req,res)
         
       } catch (error) {
         console.log("Error al procesar archivo ",error)
@@ -105,24 +86,11 @@ router.put("/",access,async (req: Request, res: Response) => {
 
   try {
 
-    const copyParams = {
-      Bucket: process.env.AWS_NAME_BUCKET,
-      CopySource: `${process.env.AWS_NAME_BUCKET}/${objetcToUpdate.oldKey}`,
-      Key: objetcToUpdate.newKey,
-    };
-    const isCopied = await s3.send(new CopyObjectCommand(copyParams));
-    
-    if( isCopied ){
-      const deleteParams = {
-        Bucket: process.env.AWS_NAME_BUCKET,
-        Key: objetcToUpdate.oldKey,
-      };
-       const isDeleted = await s3.send(new DeleteObjectCommand(deleteParams));
-       if(isDeleted) res.status(200).json({
-        status:200,
-        message:"Archivo renombrado correctamente"
-       })
-    }
+     const isDeleted = await DeleteFile(objetcToUpdate.oldKey);
+
+       if(isDeleted) {
+
+       }
 
   } catch (err) {
     console.error("Error al renombrar archivo:", err);

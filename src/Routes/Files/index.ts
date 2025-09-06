@@ -112,7 +112,7 @@ router.put("/file-privileges/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE: eliminar
-router.delete("/:key", access,async (req: Request, res: Response) => {
+router.delete("/delete/:key", access,async (req: Request, res: Response) => {
     try {
       const key = req.params.key;
       console.log("Key obtenido ",key)

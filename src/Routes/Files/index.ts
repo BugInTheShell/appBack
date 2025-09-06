@@ -1,6 +1,6 @@
 import { Request, response, Response, Router } from "express";
 //autenticacion de 2 factores
-import { S3Client , PutObjectCommand, ListObjectsV2Command , DeleteObjectCommand} from "@aws-sdk/client-s3";
+import { S3Client , PutObjectCommand, ListObjectsV2Command , DeleteObjectCommand, CopyObjectCommand} from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
@@ -8,8 +8,10 @@ import { UserFilePrivilege } from "../../models";
 import {AppDataSource} from "../../../database/typeorm.js"
 import multer from 'multer';
 import dotenv from 'dotenv';
-
+import { IUpdateFile } from "../../Interfaces";
 import {access} from "../../middlewares/index";
+
+import { DeleteFile } from "../../Controllers/Files";
 
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
@@ -33,9 +35,7 @@ const s3 = new S3Client({
 
 
 // GET: Obtener archivos por medio de jwt
-router.get("/file-privileges",
-  access,
-  async (req:any, res: Response) => {
+router.get("/file-privileges",access,async (req:any, res: Response) => {
 
   const command = new ListObjectsV2Command({
       Bucket: process.env.AWS_NAME_BUCKET,
@@ -45,8 +45,6 @@ router.get("/file-privileges",
 
   try {
     const response = await s3.send(command);
-
-    console.log("Respuesta actualizar respuesta ",response)
   
       res.status(200).json({
         status:200,
@@ -64,14 +62,7 @@ router.get("/file-privileges",
 });
 
 // Ruta para subir el archivo a S3
-router.post('/upload',
-            upload.single('file'),
-            access,
-            async (req:any, res) => {
-
-      const carpeta =`${req.email}`+"/"+`${req.file.originalname}`
-      const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
-      
+router.post('/upload',upload.single('file'),access,async (req:any, res) => {
       try {
         if (!req.file) {
           return res.status(400).send('No se ha subido ningún archivo.');
@@ -79,8 +70,8 @@ router.post('/upload',
       
         const s3Params = {
           Bucket: process.env.AWS_NAME_BUCKET,
-          Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
-          Body: req.file.buffer, // El contenido binario del archivo
+          Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname,
+          Body: req.file.buffer,
           ContentType:req.filter.mimetype
         };
 
@@ -108,16 +99,49 @@ router.post('/upload',
 });
 
 // PUT: actualizar
-router.put("/file-privileges/:id", async (req: Request, res: Response) => {
-  await filesRepository.update(req.params.id, req.body);
-  res.json({ message: "Privilegio actualizado" });
+router.put("/",access,async (req: Request, res: Response) => {
+
+  const objetcToUpdate : IUpdateFile = req.body;
+
+  try {
+
+    const copyParams = {
+      Bucket: process.env.AWS_NAME_BUCKET,
+      CopySource: `${process.env.AWS_NAME_BUCKET}/${objetcToUpdate.oldKey}`,
+      Key: objetcToUpdate.newKey,
+    };
+    const isCopied = await s3.send(new CopyObjectCommand(copyParams));
+    
+    if( isCopied ){
+      const deleteParams = {
+        Bucket: process.env.AWS_NAME_BUCKET,
+        Key: objetcToUpdate.oldKey,
+      };
+       const isDeleted = await s3.send(new DeleteObjectCommand(deleteParams));
+       if(isDeleted) res.status(200).json({
+        status:200,
+        message:"Archivo renombrado correctamente"
+       })
+    }
+
+  } catch (err) {
+    console.error("Error al renombrar archivo:", err);
+    return { success: false, error: err };
+  }
 });
 
 // DELETE: eliminar
-router.delete("/", access,async (req: Request, res: Response) => {
+router.delete("/",access,async (req: Request, res: Response) => {
     try {
       const {key} = req.body;
-      console.log("Key obtenido ",key)
+      
+      if(!key){
+        return res.status(400).json({
+          status:400,
+          message:"No se encontró key"
+        })
+      }
+
 
       if(!key.split("/")[1]){
         return res.status(400).json({
@@ -126,26 +150,16 @@ router.delete("/", access,async (req: Request, res: Response) => {
         })
       }
 
-      if(!key){
-        return res.status(400).json({
-          status:400,
-          message:"No se encontró key"
-        })
-      }
+    const isDeleted = await DeleteFile(key);
 
-      const command = new DeleteObjectCommand({
-        Bucket: process.env.AWS_NAME_BUCKET,
-        Key: key
+    if (isDeleted){
+      res.status(200).json({ 
+        status:200,
+        message: `Archivo ${key} eliminado con éxito` 
       });
 
-    const isUploaded = await s3.send(command);
+    }
 
-    console.log("Respuesta borrado ",isUploaded)
-
-    res.status(200).json({ 
-      status:200,
-      message: `Archivo ${key} eliminado con éxito` 
-    });
       
     } catch (error) {
       console.log("Error al borrar archivo ",error)
@@ -158,11 +172,6 @@ router.delete("/", access,async (req: Request, res: Response) => {
 });
 
 
-router.get("/",async (req , res) => {
-    res.status(200).json({
-        response: "Ruta login :D"
-    })
-})
 
 
 

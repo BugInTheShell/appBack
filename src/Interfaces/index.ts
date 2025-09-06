@@ -11,3 +11,8 @@ export interface IValidateUser {
   email:string,
   password:string
 }
+
+export interface IUpdateFile {
+  oldKey:string,
+  newKey:string
+}

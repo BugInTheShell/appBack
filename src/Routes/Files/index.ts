@@ -112,9 +112,10 @@ router.put("/file-privileges/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE: eliminar
-router.delete("/:name", async (req: Request, res: Response) => {
+router.delete("/:name", access,async (req: Request, res: Response) => {
     try {
       const key = req.params.name;
+      console.log("Key obtenido ",key)
 
       if(!key){
         return res.status(400).json({
@@ -128,7 +129,8 @@ router.delete("/:name", async (req: Request, res: Response) => {
         Key: key
       });
 
-    await s3.send(command);
+    const isUploaded = await s3.send(command);
+    console.log("Respuesta para eliminar archivo ",isUploaded)
 
     res.status(200).json({ 
       status:200,

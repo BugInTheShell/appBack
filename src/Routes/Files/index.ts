@@ -117,7 +117,7 @@ router.delete("/:name", async (req: Request, res: Response) => {
       const key = req.params.name;
 
       if(!key){
-        res.status(400).json({
+        return res.status(400).json({
           status:400,
           message:"No se encontró key"
         })

@@ -1,6 +1,6 @@
 import { Request, response, Response, Router } from "express";
 //autenticacion de 2 factores
-import { S3Client , PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { S3Client , PutObjectCommand, ListObjectsV2Command , DeleteObjectCommand} from "@aws-sdk/client-s3";
 
 import { File_Privileges, User_Privileges } from "../../enums/privileges";
 import { User } from "../../models";
@@ -32,11 +32,14 @@ const s3 = new S3Client({
 
 
 
-// GET: obtener por correo
-router.get("/file-privileges",access,async (req: Request, res: Response) => {
-  console.log("req com email ",req.email)
+// GET: Obtener archivos por medio de jwt
+router.get("/file-privileges",
+  access,
+  async (req:any, res: Response) => {
+
   const command = new ListObjectsV2Command({
       Bucket: process.env.AWS_NAME_BUCKET,
+      //Aqui cree la ruta con el email previamente validado en el middleware access
       Prefix: `${req.email}/`,
   });
 
@@ -56,49 +59,49 @@ router.get("/file-privileges",access,async (req: Request, res: Response) => {
     })
     
   }
-
 });
 
 // Ruta para subir el archivo a S3
-router.post('/upload',upload.single('file'),access,async (req, res) => {
+router.post('/upload',
+            upload.single('file'),
+            access,
+            async (req:any, res) => {
 
-  console.log("COrreo obtendido ",req.email)
+      const carpeta =`${req.email}`+"/"+`${req.file.originalname}`
+      const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
+      
+      try {
+        if (!req.file) {
+          return res.status(400).send('No se ha subido ningún archivo.');
+        }
+      
+        const s3Params = {
+          Bucket: process.env.AWS_NAME_BUCKET,
+          Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
+          Body: req.file.buffer, // El contenido binario del archivo
+          ContentType:req.filter.mimetype
+        };
 
-  const carpeta =`${req.email}`+"/"+`${req.file.originalname}`
-  const url = "https://"+process.env.AWS_NAME_BUCKET+".s3."+process.env.AWS_REGION+".amazonaws.com/"+carpeta
-  console.log("url a guardar ",url)
-  try {
-    if (!req.file) {
-      return res.status(400).send('No se ha subido ningún archivo.');
-    }
-  
-    const s3Params = {
-      Bucket: process.env.AWS_NAME_BUCKET,
-      Key:  `${req.email}/` +Date.now().toString() + '-' + req.file.originalname, // Nombre único para el archivo
-      Body: req.file.buffer, // El contenido binario del archivo
-      ContentType:req.filter.mimetype
-    };
+        const command = new PutObjectCommand(s3Params);
 
-    const command = new PutObjectCommand(s3Params);
-
-    await s3.send(command).then( response => {
-      return res.status(200).json({
-        message:"Archivo creado correctamente",
-        status:200
-      })
-    }).catch( error => {
-      console.log("Error al subir archivo ",error)
-      return res.status(400).json({
-        message:"Error al subir archivo"
-      })
-    })
-    
-  } catch (error) {
-    console.log("Error al procesar archivo ",error)
-    res.status(500).json({
-      message:"Error interno"
-    })
-  }
+        await s3.send(command).then( response => {
+          return res.status(200).json({
+            message:"Archivo creado correctamente",
+            status:200
+          })
+        }).catch( error => {
+          console.log("Error al subir archivo ",error)
+          return res.status(400).json({
+            message:"Error al subir archivo"
+          })
+        })
+        
+      } catch (error) {
+        console.log("Error al procesar archivo ",error)
+        res.status(500).json({
+          message:"Error interno"
+        })
+      }
 
 });
 
@@ -109,9 +112,37 @@ router.put("/file-privileges/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE: eliminar
-router.delete("/file-privileges/:id", async (req: Request, res: Response) => {
-  await filesRepository.delete(req.params.id);
-  res.json({ message: "Privilegio eliminado" });
+router.delete("/:name", async (req: Request, res: Response) => {
+    try {
+      const key = req.params.name;
+
+      if(!key){
+        res.status(400).json({
+          status:400,
+          message:"No se encontró key"
+        })
+      }
+
+      const command = new DeleteObjectCommand({
+        Bucket: process.env.AWS_NAME_BUCKET,
+        Key: key
+      });
+
+    await s3.send(command);
+
+    res.status(200).json({ 
+      status:200,
+      message: `Archivo ${key} eliminado con éxito` 
+    });
+      
+    } catch (error) {
+      console.log("Error al borrar archivo ",error)
+      res.status(500).json({
+        status:500,
+        message:"Error al eliminar archivo"
+      })
+      
+    }
 });
 
 

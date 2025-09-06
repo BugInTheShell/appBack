@@ -14,7 +14,7 @@ const router = Router();
 const userRepository = AppDataSource.getRepository(User);
 
 // GET: listar todos los usuarios
-router.get("/",access ,async (req, res: Response) => {
+router.get("/",access ,async (req:any, res: Response) => {
     const users = await userRepository.find({
       where: {
         registeredby: req.email, // asegúrate que el campo en la entidad se llame igual

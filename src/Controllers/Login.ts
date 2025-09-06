@@ -95,23 +95,27 @@ export const createUserLoged = async ( user : ICreateUser, req) => {
 };
 
 export const login = async ( user: IValidateUser) => {
-	console.log("Usuario en funcion ",user)
   
     const userLoged = await userRepository.findOne({
     where: { email:user.email },
+    //Especifico consulta de esta forma ya que por defecto en el modelo
+    //de la BD especifico no devolver el password cuando se consulten datos de usuario
+    //los demas datos sirven para creación del token de autenticación
     select :["id", "name", "email", "password", "privilege"]
   } );
-	console.log("Usuario encontrado en funcion ",userLoged)
    if (!userLoged) {
         return false;
     }
 
+    //Comparación de contraseña
     const isMatch = await bcrypt.compare(user.password, userLoged.password);
-    console.log("es mach ",isMatch)
+    
     if (!isMatch) {
         return false;
     }
 
+    //Creación de token de validación sin datos sensibles
+    //Pero relevantes para las peticiones
     const token = jwt.sign(
     {
       id: userLoged.id,

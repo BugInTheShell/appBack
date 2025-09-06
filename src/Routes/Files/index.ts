@@ -45,6 +45,8 @@ router.get("/file-privileges",
 
   try {
     const response = await s3.send(command);
+
+    console.log("Respuesta actualizar respuesta ",response)
   
       res.status(200).json({
         status:200,

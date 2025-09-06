@@ -61,3 +61,44 @@ export const uploadFile = async (req:any, res:Response)  => {
               })
             })
 }
+
+export const renameFile = async (req: any, res: Response) => {
+  try {
+    const { oldKey, newKey } = req.body;
+
+    if (!oldKey || !newKey) {
+      return res.status(400).json({
+        status: 400,
+        message: "Debes enviar oldKey y newKey en el body",
+      });
+    }
+
+    const bucket = process.env.AWS_NAME_BUCKET!;
+
+    // 1. Copiar archivo con nuevo nombre
+    const copyCommand = new CopyObjectCommand({
+      Bucket: bucket,
+      CopySource: `${bucket}/${oldKey}`,
+      Key: newKey,
+    });
+    await s3.send(copyCommand);
+
+    // 2. Eliminar archivo original
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: oldKey,
+    });
+    await s3.send(deleteCommand);
+
+    return res.status(200).json({
+      status: 200,
+      message: `Archivo renombrado de ${oldKey} a ${newKey}`,
+    });
+  } catch (error) {
+    console.error("Error al renombrar archivo:", error);
+    return res.status(500).json({
+      status: 500,
+      message: "Error al renombrar archivo",
+    });
+  }
+};

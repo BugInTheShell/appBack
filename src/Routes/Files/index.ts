@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 import { IUpdateFile } from "../../Interfaces";
 import {access} from "../../middlewares/index";
 
-import { DeleteFile , uploadFile } from "../../Controllers/Files";
+import { DeleteFile , uploadFile, renameFile } from "../../Controllers/Files";
 
 dotenv.config();
 // Configurar Multer para el almacenamiento en memoria
@@ -81,16 +81,9 @@ router.post('/upload',upload.single('file'),access,async (req:any, res) => {
 
 // PUT: actualizar
 router.put("/",access,async (req: Request, res: Response) => {
-
-  const objetcToUpdate : IUpdateFile = req.body;
-
+  
   try {
-
-     const isDeleted = await DeleteFile(objetcToUpdate.oldKey);
-
-       if(isDeleted) {
-
-       }
+    await renameFile(req,res);
 
   } catch (err) {
     console.error("Error al renombrar archivo:", err);

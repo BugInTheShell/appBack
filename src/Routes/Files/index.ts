@@ -119,6 +119,13 @@ router.delete("/", access,async (req: Request, res: Response) => {
       const {key} = req.body;
       console.log("Key obtenido ",key)
 
+      if(!key.split("/")[1]){
+        return res.status(400).json({
+          status:400,
+          message:"No se puede eliminar el archivo root"
+        })
+      }
+
       if(!key){
         return res.status(400).json({
           status:400,

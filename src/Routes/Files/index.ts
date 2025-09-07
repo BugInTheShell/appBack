@@ -79,7 +79,7 @@ router.post('/upload',upload.single('file'),access,async (req:any, res) => {
 
 });
 
-// PUT: actualizar
+// PUT: actualizar archivos
 router.put("/",access,async (req: Request, res: Response) => {
   
   try {

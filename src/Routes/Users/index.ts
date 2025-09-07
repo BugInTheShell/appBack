@@ -77,14 +77,18 @@ router.post("/",access ,async (req:Request, res: Response) => {
 });
 
 // PUT: actualizar un usuario
-router.put("/users/:id", access,async (req: Request, res: Response) => {
+router.put("/:id", access,async (req: Request, res: Response) => {
+  console.log("Datos para actualizar usuario ",req.params.id,req.body)
   await userRepository.update(req.params.id, req.body);
   res.json({ message: "Usuario actualizado" });
 });
 
+
+
+
 // DELETE: eliminar un usuario
 router.delete("/:id", access,async (req: Request, res: Response) => {
-  console.log("Data de usuario a eliminar ",req.params.id)
+  
   try {
     await userRepository.delete(req.params.id);
     res.status(200).json({ message: "Usuario eliminado", status:200 });
